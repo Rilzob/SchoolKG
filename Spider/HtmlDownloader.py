@@ -19,6 +19,7 @@ class HtmlDownloader(object):
         r = requests.get(url, headers=headers)
         if r.status_code == 200:
             r.encoding = 'utf-8'
+            # print(r.text)
             return r.text
         else:
             print("下载网页内容失败")

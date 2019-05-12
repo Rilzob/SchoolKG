@@ -14,10 +14,10 @@ from Spider.HtmlDownloader import HtmlDownloader
 class HtmlParser(object):
     def __init__(self):
         super(HtmlParser, self).__init__()
-        # self.browser = webdriver.Chrome(
-        #     executable_path='/Users/rilzob/PycharmProjects/SubjectKG/chromedriver'
-        # )
-        # self.dropdown_num = 10  # 自动下滚次数
+        self.browser = webdriver.Chrome(
+            executable_path='/Users/rilzob/PycharmProjects/SubjectKG/chromedriver'
+        )
+        self.dropdown_num = 1  # 自动下滚次数
 
     @staticmethod
     def parser(url):
@@ -97,7 +97,10 @@ class HtmlParser(object):
         return basic_info_dict
 
     def main_parse(self):
+        # 985工程url
         url = 'https://baike.baidu.com/item/985%E5%B7%A5%E7%A8%8B/1077915?fromtitle=985&fromid=7809859&fr=aladdin'
+
+        # url = 'https://baike.baidu.com/item/%E6%9C%AC%E7%A7%91%E9%99%A2%E6%A0%A1/17606093'
         if url is None:
             return None
         # self.browser.get(url)
@@ -129,6 +132,41 @@ class HtmlParser(object):
         for i in range(len(school_url_list)):
             school_dict = {}
             school_dict[school_name_list[i]] = HtmlParser().parser(school_url_list[i])
+            whole_info.update(school_dict)
+            time.sleep(1)
+        return whole_info
+
+    def new_main_parse(self):
+        url = 'https://baike.baidu.com/wikitag/taglist?tagId=37678&fromLemma=true'
+        if url is None:
+            return None
+        content = ''
+        self.browser.get(url)
+        for i in range(1, 38):  # 下滚次数
+            self.browser.execute_script("window.scrollTo(0, document.body.scrollHeight);"
+                                          "var lenOfPage=document.body.scrollHeight;"
+                                          "return lenOfPage")  # 执行下拉操作刷新页面
+            time.sleep(3)
+            content = content + self.browser.page_source
+            self.browser.find_element_by_css_selector('#waterfall-horPagerBox > div > a.pTag.next').click()
+            print('i: ', i)
+            # time.sleep(3)
+        soup = BeautifulSoup(content, 'html.parser')
+        school_set = soup.find_all('div', class_='waterFall_item fromLemma')
+        school_url_list = []
+        school_name_list = []
+        for school in school_set:
+            if school.find('a') is not None:
+                school_url_list.append(school.find('a')['href'])
+                school_name_list.append(school.find('div', class_='waterFall_content_title').get_text())
+            else:
+                continue
+            # print("school_url", school_url)
+
+        whole_info = {}
+        for i in range(len(school_url_list)):
+            school_dict = {}
+            school_dict[school_name_list[i]] = self.parser(school_url_list[i])
             whole_info.update(school_dict)
             time.sleep(1)
         return whole_info
