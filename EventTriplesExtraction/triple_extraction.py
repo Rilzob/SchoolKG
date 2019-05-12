@@ -163,4 +163,4 @@ def test():
     # svos = extractor.triples_main(content6a)
     # print('svos', svos)
 
-test()
+# test()

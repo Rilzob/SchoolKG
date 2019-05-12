@@ -8,10 +8,11 @@ from Spider.DataOutput import DataOutput
 from EventTriplesExtraction.triple_extraction import TripleExtractor
 
 if __name__ == "__main__":
-    url = 'https://baike.baidu.com/item/%E4%B8%9C%E5%8C%97%E5%A4%A7%E5%AD%A6/18014'
+    # url = 'https://baike.baidu.com/item/%E4%B8%9C%E5%8C%97%E5%A4%A7%E5%AD%A6/18014'
 
-    whole_info = HtmlParser().main_parse()
-    DataOutput().output('output.txt', whole_info)
+    # whole_info = HtmlParser().main_parse()
+    whole_info = HtmlParser().new_main_parse()
+    DataOutput().output('output2.json', whole_info)
 
     # 将school_introduce生成三元组并将生成后的结果添加到whole_info中
     extractor = TripleExtractor()
@@ -21,4 +22,4 @@ if __name__ == "__main__":
         school_introduce_triple['school_introduce_triple'] = introduce_tripe
         whole_info[school_name].update(school_introduce_triple)
 
-    DataOutput().output('data.txt', whole_info)
+    DataOutput().output('data.json', whole_info)
